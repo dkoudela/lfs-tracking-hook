@@ -1,0 +1,52 @@
+#!/usr/bin/python
+import subprocess
+from subprocess import Popen, PIPE
+import re
+import os
+
+statusCmd = [ 'git', 'status', '--porcelain' ]
+addedFileFlags = [ ' A ', 'A ' ]
+fileRegExps = [ 'JArchitectOut.*\.jdar' ]
+lfsTrackCmd = [ 'git', 'lfs', 'track' ]
+addedChangedAttributesCmd = [ 'git', 'add', '.gitattributes' ]
+filesToBeTrackedByLfs = []
+
+try:
+    pwd = os.getcwd()
+    print "current dir: "+pwd
+    #gitWorkTree = 'GIT_WORK_TREE="' + pwd + '"'
+    gitWorkTree = 'GIT_WORK_TREE="' + pwd + '"'
+    gitStatus = Popen(statusCmd, stdout=PIPE, stderr=PIPE)
+    gitStatusResult = gitStatus.stdout.readlines()
+    for line in gitStatusResult:
+        line = line[:-1]
+        fileNameIndex = line.rfind(' ')
+        fileName = line[fileNameIndex+1:]
+        for fileFlag in addedFileFlags:
+            if line.startswith(fileFlag):
+                for fileRegExp in fileRegExps:
+                    if re.match(fileRegExp, fileName):
+                        try:
+                            print "LFS Tracking: " + fileName
+                            filesToBeTrackedByLfs.append(fileName)
+                            #subprocess.check_call(gitWorkTree + ' git lfs track ' + fileName, shell=True)
+                        except Exception as e:
+                            print "LFS tracking failed: " + str(e)
+
+    #gitTrack = subprocess.check_call('git lfs env', shell=True)
+    if 0 < len(filesToBeTrackedByLfs):
+        subprocess.check_call(addedChangedAttributesCmd, shell=True)
+        #for fileName in filesToBeTrackedByLfs:
+            #subprocess.check_call(gitWorkTree + ' git lfs track ' + fileName, shell=True)
+            #subprocess.check_call([ gitWorkTree ] + lfsTrackCmd + [ fileName ])
+            #gitTrack = Popen(gitWorkTree + ' git lfs track ' + fileName, stdout=PIPE, stderr=PIPE, shell=True)
+            #stdoutdata, stderrdata = gitTrack.communicate()
+            #print "Tracked: " + fileName
+            #print stdoutdata
+            #print stderrdata
+
+except Exception as e:
+    print "LFS tracking hook failed: " + str(e)
+    exit(1)
+
+exit(1)
