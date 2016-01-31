@@ -4,38 +4,72 @@ from subprocess import Popen, PIPE
 import re
 import os
 
+regExpFilename = '.gitlftracking'
+
+gitEnvCmd = [ 'git', 'lfs', 'env' ]
+gitLocalWorkingDir = 'LocalWorkingDir'
+localWorkingDir = ''
 statusCmd = [ 'git', 'status', '--porcelain' ]
 addedFileFlags = [ ' A ', 'A ' ]
-fileRegExps = [ 'JArchitectOut.*\.jdar' ]
+#fileRegExps = [ 'JArchitectOut.*\.jdar' ]
+fileRegExps = [ ]
 lfsTrackCmd = ' git lfs track '
 addedChangedAttributesCmd = [ 'git', 'add', '.gitattributes' ]
 filesToBeTrackedByLfs = []
 
-try:
-    pwd = os.getcwd()
-    gitWorkTree = 'GIT_WORK_TREE="' + pwd + '"'
-    gitStatus = Popen(statusCmd, stdout=PIPE, stderr=PIPE)
-    gitStatusResult = gitStatus.stdout.readlines()
-    for line in gitStatusResult:
-        line = line[:-1]
-        fileNameIndex = line.rfind(' ')
-        fileName = line[fileNameIndex+1:]
-        for fileFlag in addedFileFlags:
-            if line.startswith(fileFlag):
-                for fileRegExp in fileRegExps:
-                    if re.match(fileRegExp, fileName):
-                        try:
-                            print "LFS Tracking: " + fileName
-                            filesToBeTrackedByLfs.append(fileName)
-                            subprocess.check_call(gitWorkTree + lfsTrackCmd + fileName, shell=True)
-                        except Exception as e:
-                            print "LFS tracking failed: " + str(e)
+class Tracker:
+    def __init__(self):
+        try:
+            gitEnv = Popen(gitEnvCmd, stdout=PIPE, stderr=PIPE)
+            gitEnvResult = gitEnv.stdout.readlines()
+            for line in gitEnvResult:
+                if line.startswith(gitLocalWorkingDir):
+                    localWorkingDir = (re.split('=', line)[1])[:-1]
+                    break
+            filenameFullPath = localWorkingDir + os.sep + regExpFilename
+            regExpFile = open(filenameFullPath, 'r')
+            for line in regExpFile.readlines():
+                fileRegExps.append(line[:-1])
+            print "LFS RegExp Array: " + str(fileRegExps)
+        except Exception as e:
+            print "LFS open file "+ filenameFullPath +" failed: "
+            print e
+            print "LFS tracking hook cannot track new files"
+            exit(1)
 
-    if 0 < len(filesToBeTrackedByLfs):
-        subprocess.check_call(addedChangedAttributesCmd)
+    def track(self):
+        pwd = os.getcwd()
+        gitWorkTree = 'GIT_WORK_TREE="' + pwd + '"'
+        gitStatus = Popen(statusCmd, stdout=PIPE, stderr=PIPE)
+        gitStatusResult = gitStatus.stdout.readlines()
+        for line in gitStatusResult:
+            line = line[:-1]
+            fileNameIndex = line.rfind(' ')
+            fileName = line[fileNameIndex+1:]
+            for fileFlag in addedFileFlags:
+                if line.startswith(fileFlag):
+                    for fileRegExp in fileRegExps:
+                        if re.match(fileRegExp, fileName):
+                            try:
+                                print "LFS Tracking: " + fileName
+                                filesToBeTrackedByLfs.append(fileName)
+                                subprocess.check_call(gitWorkTree + lfsTrackCmd + fileName, shell=True)
+                            except Exception as e:
+                                print "LFS tracking failed: "
+                                print e
+    
+        if 0 < len(filesToBeTrackedByLfs):
+            subprocess.check_call(addedChangedAttributesCmd)
 
-except Exception as e:
-    print "LFS tracking hook failed: " + str(e)
+if __name__ == "__main__":
+    print "LFS tracking hook started"
+    try:
+        tracker = Tracker()
+        tracker.track()
+    except Exception as e:
+        print "LFS tracking hook failed: "
+        print e
+        exit(1)
+    
+    print "LFS tracking hook ended"
     exit(1)
-
-exit(1)
