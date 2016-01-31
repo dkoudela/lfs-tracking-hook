@@ -11,13 +11,12 @@ gitLocalWorkingDir = 'LocalWorkingDir'
 localWorkingDir = ''
 statusCmd = [ 'git', 'status', '--porcelain' ]
 addedFileFlags = [ ' A ', 'A ' ]
-#fileRegExps = [ 'JArchitectOut.*\.jdar' ]
 fileRegExps = [ ]
 lfsTrackCmd = ' git lfs track '
 addedChangedAttributesCmd = [ 'git', 'add', '.gitattributes' ]
 filesToBeTrackedByLfs = []
 
-class Tracker:
+class LfsTracker:
     def __init__(self):
         try:
             gitEnv = Popen(gitEnvCmd, stdout=PIPE, stderr=PIPE)
@@ -64,7 +63,7 @@ class Tracker:
 if __name__ == "__main__":
     print "LFS tracking hook started"
     try:
-        tracker = Tracker()
+        tracker = LfsTracker()
         tracker.track()
     except Exception as e:
         print "LFS tracking hook failed: "
