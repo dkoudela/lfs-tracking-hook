@@ -12,7 +12,9 @@ localWorkingDir = ''
 statusCmd = [ 'git', 'status', '--porcelain' ]
 addedFileFlags = [ ' A ', 'A ' ]
 fileRegExps = [ ]
+gitResetCmd = [ 'git', 'reset' ]
 lfsTrackCmd = ' git lfs track '
+gitAddCmd = [ 'git', 'add' ]
 addedChangedAttributesCmd = [ 'git', 'add', '.gitattributes' ]
 filesToBeTrackedByLfs = []
 
@@ -50,15 +52,20 @@ class LfsTracker:
                     for fileRegExp in fileRegExps:
                         if re.match(fileRegExp, fileName):
                             try:
-                                print "LFS Tracking: " + fileName
-                                filesToBeTrackedByLfs.append(fileName)
-                                subprocess.check_call(gitWorkTree + lfsTrackCmd + fileName, shell=True)
+                                self.__trackTheFile(gitWorkTree, fileName)
                             except Exception as e:
                                 print "LFS tracking failed: "
                                 print e
     
         if 0 < len(filesToBeTrackedByLfs):
             subprocess.check_call(addedChangedAttributesCmd)
+
+    def __trackTheFile(self, gitWorkTree, fileName):
+        print "LFS Tracking: " + fileName
+        filesToBeTrackedByLfs.append(fileName)
+        subprocess.check_call(gitResetCmd + [ fileName ])
+        subprocess.check_call(gitWorkTree + lfsTrackCmd + fileName, shell=True)
+        subprocess.check_call(gitAddCmd + [ fileName ])
 
 if __name__ == "__main__":
     print "LFS tracking hook started"
