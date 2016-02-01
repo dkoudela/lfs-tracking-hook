@@ -20,6 +20,9 @@ filesToBeTrackedByLfs = []
 
 class LfsTracker:
     def __init__(self):
+        """
+        Read the configuration file containing RegExp entries for automatic LFS tracking.
+        """
         try:
             gitEnv = Popen(gitEnvCmd, stdout=PIPE, stderr=PIPE)
             gitEnvResult = gitEnv.stdout.readlines()
@@ -39,6 +42,9 @@ class LfsTracker:
             exit(1)
 
     def track(self):
+        """
+        Searches for git added files which match the RegExps and triggers LFS tracking.
+        """
         pwd = os.getcwd()
         gitWorkTree = 'GIT_WORK_TREE="' + pwd + '"'
         gitStatus = Popen(statusCmd, stdout=PIPE, stderr=PIPE)
@@ -61,6 +67,15 @@ class LfsTracker:
             subprocess.check_call(addedChangedAttributesCmd)
 
     def __trackTheFile(self, gitWorkTree, fileName):
+        """
+        Ensures a given filename is tracked by LFS.
+        
+        It is required to reset the file before LFS Track command and add it back
+        after the LFS Track command.
+
+        @param gitWorkTree git working tree used by LFS for a verification if the file belongs to the current repo.
+        @param fileName the filename to be tracked by LFS
+        """
         print "LFS Tracking: " + fileName
         filesToBeTrackedByLfs.append(fileName)
         subprocess.check_call(gitResetCmd + [ fileName ])
