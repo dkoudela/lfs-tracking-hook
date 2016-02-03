@@ -21,8 +21,9 @@ If a filename is matched, the git hook ensures the file is tracked by the LFS.
 Files already indexed by git repository are not considered.
 
 ## Installation
-1. Create a file ``.gitlftracking`` in the root directory of the git repository.
-2. Add regular expressions matching filenames of files to be tracked, e.g.:
+1. Install LFS and initialize the LFS by ccommand ``git lfs install`` (once per machine)
+2. Create a file ``.gitlftracking`` in the root directory of the git repository.
+3. Add regular expressions matching filenames of files to be tracked, e.g.:
 
    ``JArchitectOut.*\.jdar``
 
@@ -30,5 +31,8 @@ Files already indexed by git repository are not considered.
    
    ``database.*\.mdb``
 
-3. Commit the file ``.gitlftracking`` to the git repository.
-4. Copy the file https://github.com/dkoudela/lfs-tracking-hook/blob/master/pre-commit to the directory ``.git/hooks/`` in the git repository.
+4. Commit the file ``.gitlftracking`` to the git repository.
+5. Copy the file https://github.com/dkoudela/lfs-tracking-hook/blob/master/pre-commit to the directory ``.git/hooks/`` in the git repository.
+
+> Note 1.: 
+> If you already have a pre-commit hook in your git repository, you have to merge the scripts together.
