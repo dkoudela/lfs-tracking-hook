@@ -43,3 +43,5 @@ Files already indexed by git repository are not considered.
 
 > Note 2.:
 > As a pre-commit hook cannot be submitted to the git repository, the installation procedure has to be executed in every cloned git repository.
+
+---
