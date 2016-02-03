@@ -34,5 +34,12 @@ Files already indexed by git repository are not considered.
 4. Commit the file ``.gitlftracking`` to the git repository.
 5. Copy the file https://github.com/dkoudela/lfs-tracking-hook/blob/master/pre-commit to the directory ``.git/hooks/`` in the git repository.
 
+---
+
 > Note 1.: 
 > If you already have a pre-commit hook in your git repository, you have to merge the scripts together.
+
+---
+
+> Note 2.:
+> As a pre-commit hook cannot be submitted to the git repository, the installation procedure has to be executed in every cloned git repository.
