@@ -26,6 +26,9 @@ class LfsTracker:
         try:
             gitEnv = Popen(gitEnvCmd, stdout=PIPE, stderr=PIPE)
             gitEnvResult = gitEnv.stdout.readlines()
+            gitEnv.communicate()
+            if 0 != gitEnv.returncode:
+                raise Exception('command '+' '.join(gitEnvCmd)+' failed. Verify that LFS environment is set on the machine.')
             for line in gitEnvResult:
                 if line.startswith(gitLocalWorkingDir):
                     localWorkingDir = (re.split('=', line)[1])[:-1]
@@ -36,7 +39,7 @@ class LfsTracker:
                 fileRegExps.append(line[:-1])
             print "LFS RegExp Array: " + str(fileRegExps)
         except Exception as e:
-            print "LFS open file "+ filenameFullPath +" failed: "
+            print "LFS open file "+ regExpFilename +" failed: "
             print e
             print "LFS tracking hook cannot track new files"
             exit(1)
