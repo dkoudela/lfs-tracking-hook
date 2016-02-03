@@ -20,3 +20,15 @@ This git hook matches filenames of newly committed files against given RegExp de
 If a filename is matched, the git hook ensures the file is tracked by the LFS.
 Files already indexed by git repository are not considered.
 
+## Installation
+1. Create a file ``.gitlftracking`` in the root directory of the git repository.
+2. Add regular expressions matching filenames of files to be tracked, e.g.:
+
+   ``JArchitectOut.*\.jdar``
+
+   ``*\.jpeg``
+   
+   ``database.*\.mdb``
+
+3. Commit the file ``.gitlftracking`` to the git repository.
+4. Copy the file https://github.com/dkoudela/lfs-tracking-hook/blob/master/pre-commit to the directory ``.git/hooks/`` in the git repository.
