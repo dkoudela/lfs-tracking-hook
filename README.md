@@ -20,6 +20,14 @@ This git hook matches filenames of newly committed files against given RegExp de
 If a filename is matched, the git hook ensures the file is tracked by the LFS.
 Files already indexed by git repository are not considered.
 
+Using the example above, it is necessary just execute the standard git commands:
+
+``git add file.psd``
+
+``git commit -m "Add design file"``
+
+``git push origin master``
+
 ## Installation
 1. Install LFS and initialize the LFS by ccommand ``git lfs install`` (once per machine)
 2. Create a file ``.gitlftracking`` in the root directory of the git repository.
