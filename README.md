@@ -15,7 +15,7 @@ The following example is taken from https://git-lfs.github.com/:
 These four commands have to be executed every time a new file is added to the LFS repository.
 If forgotten or executed in a different order, the files will not be tracked by the LFS and will be part of the standard git repository.
 
-Additionally, ``git add`` and ``git lfs track`` behave differently in case of adding/tracking content of subdirectories.
+Additionally, ``git add`` and ``git lfs track`` behave differently in case of adding/tracking a content of subdirectories.
 ``git lfs track`` command does not recursively search in subdirectories unless an explicit glob expression is used.
 
 Example:
