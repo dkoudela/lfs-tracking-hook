@@ -1,4 +1,13 @@
 #!/usr/bin/python
+"""
+This git hook matches filenames of newly committed files against given RegExp definition.
+If a filename is matched, the git hook ensures the file is tracked by the LFS.
+Files already indexed by git repository are not considered.
+
+See the github repository:
+https://github.com/dkoudela/lfs-tracking-hook
+"""
+
 import subprocess
 from subprocess import Popen, PIPE
 import re
